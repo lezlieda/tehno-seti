@@ -4,23 +4,26 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
-@Table(name = "invoices")
 @Getter
 @Setter
-public class Invoice {
+public class Pallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String invoiceNumber;
-    private LocalDate invoiceDate;
-    private BigDecimal totalAmount;
-
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
+    private Integer palletNumber;
+    private Integer totalPallets;
+    private Integer positionsCount;
+    private LocalDate shippingDate;
+
+    @OneToMany(mappedBy = "pallet", cascade = CascadeType.ALL)
+    private List<PalletItem> items;
 }

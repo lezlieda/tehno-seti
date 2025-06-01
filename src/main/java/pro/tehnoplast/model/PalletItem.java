@@ -1,31 +1,24 @@
 package pro.tehnoplast.model;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @Getter
 @Setter
-public class OrderItem {
+public class PalletItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "pallet_id")
+    private Pallet pallet;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "quantity")
     private Integer quantity;
-
-    @Column(name = "amount")
-    private Integer amount;
 }
