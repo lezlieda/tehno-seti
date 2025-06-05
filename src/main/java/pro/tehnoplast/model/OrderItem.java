@@ -15,17 +15,15 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+    @Column(nullable = false)
+    private Short quantity;
 
-    @Column(name = "amount")
-    private Integer amount;
+    @Column(nullable = false)
+    private BigDecimal amount;
 }

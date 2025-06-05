@@ -4,14 +4,15 @@ spring:
     username: tehno_user
     password: Hfleuf7&
     driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
-
-app:
-  file-storage: C:\Users\user\Documents\tehnoseti\uploads

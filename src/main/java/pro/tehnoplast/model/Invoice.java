@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "invoices")
+@Table(name = "invoice")
 @Getter
 @Setter
 public class Invoice {
@@ -16,11 +16,15 @@ public class Invoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String invoiceNumber;
-    private LocalDate invoiceDate;
-    private BigDecimal totalAmount;
+    @Column(name = "invoice_number", nullable = false)
+    private Short invoiceNumber;
 
-    @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @Column(name = "invoice_date", nullable = false)
+    private LocalDate invoiceDate;
+
+    @Column(name = "sum", nullable = false)
+    private BigDecimal sum;
+
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
 }

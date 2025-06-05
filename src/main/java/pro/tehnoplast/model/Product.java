@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 @Getter
 @Setter
 public class Product {
@@ -16,13 +16,13 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true, length = 13)
-    private String barcode; // EAN13
+    @Column(nullable = false)
+    private String barCode;
 
     @Column(nullable = false)
     private Double coefficient;
 
-    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ProductType type;
 
     public enum ProductType {

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "order")
 @Getter
 @Setter
 public class Order {
@@ -16,22 +16,19 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "order_number", nullable = false)
     private String orderNumber;
 
-    private LocalDate orderDate;
+    @Column(name = "issue_date", nullable = false)
+    private LocalDate issueDate;
+
+    @Column(name = "delivery_date", nullable = false)
     private LocalDate deliveryDate;
 
-    private String customerTaxId;
-    private String customerLegalName;
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
 
-    @ManyToOne
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse warehouse;
+    @Column(name = "warehouse_id", nullable = false)
+    private Long warehouseId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> items;
-
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    private Invoice invoice;
 }
