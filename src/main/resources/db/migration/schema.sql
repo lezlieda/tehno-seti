@@ -1,6 +1,6 @@
 create type productType as enum ('plastic', 'metal', 'pnd');
 
-create table customer
+create table customers
 (
     id           bigserial primary key,
     tax_id       varchar(20)  not null unique,
@@ -8,7 +8,7 @@ create table customer
     contact_info varchar(255)
 );
 
-create table warehouse
+create table warehouses
 (
     id         bigserial primary key,
     gln        bigint      not null unique,
@@ -17,7 +17,7 @@ create table warehouse
     region     varchar     not null
 );
 
-create table product
+create table products
 (
     id          bigserial primary key,
     name        varchar(255) not null,
@@ -26,31 +26,31 @@ create table product
     type        productType
 );
 
-create table "order"
+create table orders
 (
     id            bigserial primary key,
     order_number  varchar(20) not null,
     issue_date    date not null,
     delivery_date date not null,
-    customer_id   bigint references customer (id),
-    warehouse_id  bigint references warehouse (id)
+    customer_id   bigint references customers (id),
+    warehouse_id  bigint references warehouses (id)
 );
 
-create table order_item
+create table order_items
 (
     id         bigserial primary key,
-    order_id   bigint not null references "order" (id),
-    product_id bigint not null references product (id),
+    order_id   bigint not null references orders (id),
+    product_id bigint not null references products (id),
     quantity   smallint not null check (quantity > 0),
     amount     decimal not null
 );
 
-create table invoice
+create table invoices
 (
     id             bigserial primary key,
     invoice_number smallint not null,
     invoice_date   date not null,
     sum            decimal not null,
-    order_id       bigint references "order" (id)
+    order_id       bigint references orders (id)
 );
 
