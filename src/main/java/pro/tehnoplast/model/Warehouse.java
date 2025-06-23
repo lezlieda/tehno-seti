@@ -13,15 +13,15 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String code_gln;
 
-    @Column
+    @Column(nullable = false)
     private String address;
 
-    @Column
+    @Column(nullable = false)
     private String region;
 
-    @Column
+    @Column(name = "short_name", nullable = false)
     private String shortName;
 }

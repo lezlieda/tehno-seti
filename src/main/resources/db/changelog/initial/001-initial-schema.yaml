@@ -1,0 +1,237 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-product-type
+      author: admin
+      changes:
+        - createEnumType:
+            enumName: producttype
+            enumValues: [plastic, metal, pnd]
+
+  - changeSet:
+      id: 002-create-customers-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tax_id
+                  type: varchar(20)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: legal_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: contact_info
+                  type: varchar(255)
+
+  - changeSet:
+      id: 003-create-warehouses-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: warehouses
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: gln
+                  type: bigint
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: short_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: region
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 004-create-products-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: barcode
+                  type: varchar(13)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: coefficient
+                  type: numeric
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: producttype
+
+  - changeSet:
+      id: 005-create-orders-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: issue_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: bigint
+              - column:
+                  name: warehouse_id
+                  type: bigint
+              - addForeignKeyConstraint:
+                  baseTableName: orders
+                  baseColumnNames: customer_id
+                  constraintName: fk_orders_customers
+                  referencedTableName: customers
+                  referencedColumnNames: id
+              - addForeignKeyConstraint:
+                  baseTableName: orders
+                  baseColumnNames: warehouse_id
+                  constraintName: fk_orders_warehouses
+                  referencedTableName: warehouses
+                  referencedColumnNames: id
+
+  - changeSet:
+      id: 006-create-order-items-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: smallint
+                  constraints:
+                    nullable: false
+                    check: "quantity > 0"
+              - column:
+                  name: amount
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - addForeignKeyConstraint:
+                  baseTableName: order_items
+                  baseColumnNames: order_id
+                  constraintName: fk_order_items_orders
+                  referencedTableName: orders
+                  referencedColumnNames: id
+              - addForeignKeyConstraint:
+                  baseTableName: order_items
+                  baseColumnNames: product_id
+                  constraintName: fk_order_items_products
+                  referencedTableName: products
+                  referencedColumnNames: id
+
+  - changeSet:
+      id: 007-create-invoices-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: invoices
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: invoice_number
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: invoice_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sum
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+              - addForeignKeyConstraint:
+                  baseTableName: invoices
+                  baseColumnNames: order_id
+                  constraintName: fk_invoices_orders
+                  referencedTableName: orders
+                  referencedColumnNames: id
