@@ -5,5 +5,5 @@ import pro.tehnoplast.repository.OrdersRepository;
 
 @Service
 public class OrderParserService {
-    private final OrdersRepository orderRepository;
+
 }

@@ -1,0 +1,1262 @@
+Директория: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti
+
+├── chat.sh
+├── pom.xml
+├── project_structure.json
+├── project_structure.md
+├── src
+│   └── main
+│       ├── java
+│       │   └── pro
+│       │       └── tehnoplast
+│       │           ├── TehnoSetiApplication.java
+│       │           ├── model
+│       │           │   ├── Customer.java
+│       │           │   ├── Invoice.java
+│       │           │   ├── Order.java
+│       │           │   ├── OrderItem.java
+│       │           │   ├── Product.java
+│       │           │   └── Warehouse.java
+│       │           ├── parser
+│       │           │   ├── InvoiceXml.java
+│       │           │   └── OrderXlsx.java
+│       │           ├── repository
+│       │           │   ├── BaseRepository.java
+│       │           │   ├── CustomerRepository.java
+│       │           │   ├── InvoicesRepository.java
+│       │           │   ├── OrderItemsRepository.java
+│       │           │   ├── OrdersRepository.java
+│       │           │   ├── ProductRepository.java
+│       │           │   └── WarehouseRepository.java
+│       │           └── service
+│       │               └── OrderParserService.java
+│       └── resources
+│           ├── 01 СВОДНАЯ таблица Заказ в Петрович 18.06.2025.xlsx
+│           ├── application.yml
+│           └── db
+│               ├── changelog
+│               │   ├── db.changelog-master.yaml
+│               │   └── initial
+│               │       └── 001-initial-schema.yaml
+│               └── migration
+│                   ├── data
+│                   │   └── customers.tsv
+│                   └── schema.sql
+├── structure_20250617_233409.txt
+└── tehnoseti.iml
+
+══════════════════════════════════════════
+             СОДЕРЖИМОЕ ФАЙЛОВ
+══════════════════════════════════════════
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: chat.sh
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/chat.sh
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+#!/bin/bash
+
+# Проверка наличия аргумента
+if [ $# -ne 1 ]; then
+    echo "Ошибка: укажите путь как аргумент скрипта"
+    echo "Пример: $0 /путь/к/директории"
+    exit 1
+fi
+
+target_dir="$1"
+
+# Проверка существования директории
+if [ ! -d "$target_dir" ]; then
+    echo "Ошибка: директория '$target_dir' не существует!"
+    exit 1
+fi
+
+# Получаем абсолютный путь к целевой директории
+abs_path=$(realpath "$target_dir")
+
+# Генерация имени файла с временной меткой
+output_file="structure_$(date +'%Y%m%d_%H%M%S').txt"
+
+# Сохраняем структуру директории
+{
+    # Выводим абсолютный путь
+    echo "Директория: $abs_path"
+    echo ""
+
+    # Выводим структуру дерева
+    tree -I ".*|target" --noreport --matchdirs --prune -o /dev/stdout "$abs_path" 2>/dev/null | tail -n +2
+
+    # Разделитель для файлов
+    echo ""
+    echo "══════════════════════════════════════════"
+    echo "             СОДЕРЖИМОЕ ФАЙЛОВ"
+    echo "══════════════════════════════════════════"
+    echo ""
+
+    # Находим все текстовые файлы и выводим их содержимое
+    find "$abs_path" -type f ! -path '*/.*' ! -path '*/target/*' -exec grep -Iq . {} \; -print | while read -r file; do
+        # Выводим заголовок файла
+        echo "▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"
+        echo "▓ ФАЙЛ: $(basename "$file")"
+        echo "▓ ПУТЬ: $file"
+        echo "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"
+        echo ""
+
+        # Выводим содержимое файла
+        cat "$file"
+
+        # Добавляем пустые строки для разделения
+        echo ""
+        echo ""
+    done
+
+} > "$output_file"
+
+# Проверка успешности выполнения
+if [ $? -eq 0 ]; then
+    echo "Структура и содержимое файлов сохранены в: $(pwd)/$output_file"
+else
+    echo "Произошла ошибка при создании отчета"
+    exit 1
+fi
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: pom.xml
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/pom.xml
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>pro.tehnoplast</groupId>
+    <artifactId>tehnoseti</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-boot.version>3.5.0</spring-boot.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <!-- Базы данных -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+        </dependency>
+
+        <!-- Excel обработка -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.4.0</version>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Date/Time -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.3</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.32.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>pro.tehnoplast.TehnoSetiApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: project_structure.json
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/project_structure.json
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+{
+  "project_name": "OrderAndInvoiceSystem",
+  "description": "Система для импорта заказов (xlsx) и счетов (xml), а также генерации сводных отчетов.",
+  "phases": [
+    {
+      "phase_id": "setup",
+      "name": "Настройка среды разработки",
+      "description": "Подготовка окружения для работы Spring Boot приложения и базы данных PostgreSQL.",
+      "tasks": [
+        {
+          "task_id": "1.1",
+          "name": "Создание Spring Boot проекта",
+          "dependencies": [],
+          "estimated_time": "2 дня"
+        },
+        {
+          "task_id": "1.2",
+          "name": "Настройка PostgreSQL или Docker контейнера с базой данных",
+          "dependencies": ["1.1"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "backend",
+      "name": "Разработка Backend (Spring Boot)",
+      "description": "Создание REST API, сервисов для парсинга и валидации данных.",
+      "tasks": [
+        {
+          "task_id": "2.1",
+          "name": "Определение Entity-классов",
+          "dependencies": ["setup"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "2.2",
+          "name": "Реализация сервиса для парсинга xlsx файлов (Orders)",
+          "dependencies": ["2.1"],
+          "estimated_time": "4 дня"
+        },
+        {
+          "task_id": "2.3",
+          "name": "Реализация сервиса для парсинга xml файлов (Invoices)",
+          "dependencies": ["2.1"],
+          "estimated_time": "5 дней"
+        },
+        {
+          "task_id": "2.4",
+          "name": "Валидация данных между заказами и счетами",
+          "dependencies": ["2.3", "2.2"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "2.5",
+          "name": "Реализация REST API контроллеров",
+          "dependencies": ["backend"],
+          "estimated_time": "4 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "frontend",
+      "name": "Разработка Frontend (Thymeleaf)",
+      "description": "Создание веб-интерфейса для загрузки файлов и отображения результатов.",
+      "tasks": [
+        {
+          "task_id": "3.1",
+          "name": "Создание HTML/CSS интерфейсов для загрузки файлов",
+          "dependencies": ["2.5"],
+          "estimated_time": "4 дня"
+        },
+        {
+          "task_id": "3.2",
+          "name": "Интеграция frontend с backend API",
+          "dependencies": ["3.1", "2.5"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "export",
+      "name": "Разработка функционала экспорта сводных таблиц (Excel)",
+      "description": "Создание сервиса для генерации Excel-отчетов.",
+      "tasks": [
+        {
+          "task_id": "4.1",
+          "name": "Интеграция с Apache POI для создания Excel файлов",
+          "dependencies": ["frontend", "backend"],
+          "estimated_time": "5 дней"
+        },
+        {
+          "task_id": "4.2",
+          "name": "Разработка контроллера и API для экспорта данных",
+          "dependencies": ["3.2", "2.5"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "testing",
+      "name": "Тестирование всего приложения",
+      "description": "Проверка корректности работы всех компонентов системы.",
+      "tasks": [
+        {
+          "task_id": "5.1",
+          "name": "Тестирование парсеров (Orders, Invoices)",
+          "dependencies": ["2.4"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "5.2",
+          "name": "Тестирование REST API контроллеров",
+          "dependencies": ["export", "frontend"],
+          "estimated_time": "4 дня"
+        }
+      ]
+    }
+  ],
+  "team_roles": [
+    {
+      "role": "backend_developer",
+      "description": "Разрабатывает серверную часть, Entity-классы и API.",
+      "tasks": [],
+      "tools": ["Java", "Spring Boot", "PostgreSQL"]
+    },
+    {
+      "role": "frontend_developer",
+      "description": "Создает пользовательский интерфейс для взаимодействия с приложением.",
+      "tasks": [],
+      "tools": ["HTML/CSS/JS", "Thymeleaf"]
+    }
+  ],
+  "dependencies_summary": {
+    "spring-boot-starter-web": true,
+    "spring-boot-starter-data-jpa": true,
+    "postgreSQL": true
+  },
+  "notes": [
+    "Общая продолжительность проекта оценена в ~2 месяца.",
+    "Для парсинга XML рекомендуется использовать SAX или DOM.",
+    "Тестирование необходимо проводить на каждом этапе разработки."
+  ]
+}
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: project_structure.md
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/project_structure.md
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+# Структура Проекта: OrderAndInvoiceSystem
+
+## Описание
+Система для импорта заказов (xlsx) и счетов (xml), а также генерации сводных отчетов.
+
+## Фазы Разработки
+
+### 🛠️ 1. Настройка среды разработки
+- Подготовка Spring Boot проекта
+- Сборка PostgreSQL или настройка Docker контейнера с базой данных
+
+**Завершение:** [ ]
+
+### 💻 2. Backend (Spring Boot)
+- Определение Entity-классов:
+    - `Order`
+    - `Invoice`
+    - `Product`
+    - `Recipient`
+    - `Warehouse`
+- Парсер xlsx файлов (`Orders`)
+- Парсер xml файлов (`Invoices`)
+- Валидация данных между заказами и счетами
+- Разработка REST API контроллеров
+
+**Завершение:** [ ]
+
+### 🌐 3. Frontend (Thymeleaf)
+- Создание HTML/CSS интерфейсов для загрузки файлов
+- Интеграция frontend с backend API
+
+**Завершение:** [ ]
+
+### 🔷 4. Export (Excel)
+- Интеграция с Apache POI для создания Excel файлов
+- Разработка контроллера и API для экспорта данных
+
+**Завершение:** [ ]
+
+### 🧪 5. Тестирование всего приложения
+- Тестирование парсеров (`Orders`, `Invoices`)
+- Тестирование REST API контроллеров
+
+**Завершение:** [ ]
+
+## Информация о задачах
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: Customer.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/Customer.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "customers")
+@Getter
+@Setter
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "tax_id", nullable = false, unique = true)
+    private String taxId;
+
+    @Column(name = "legal_name", nullable = false)
+    private String legalName;
+
+    @Column(name = "contact_info", nullable = false)
+    private String contactInfo;
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: Invoice.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/Invoice.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "invoice")
+@Getter
+@Setter
+public class Invoice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "invoice_number", nullable = false)
+    private Short invoiceNumber;
+
+    @Column(name = "invoice_date", nullable = false)
+    private LocalDate invoiceDate;
+
+    @Column(name = "sum", nullable = false)
+    private BigDecimal sum;
+
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: Order.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/Order.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Entity
+@Table(name = "order")
+@Getter
+@Setter
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "order_number", nullable = false)
+    private String orderNumber;
+
+    @Column(name = "issue_date", nullable = false)
+    private LocalDate issueDate;
+
+    @Column(name = "delivery_date", nullable = false)
+    private LocalDate deliveryDate;
+
+    @Column(name = "customer_id", nullable = false)
+    private Long customerId;
+
+    @Column(name = "warehouse_id", nullable = false)
+    private Long warehouseId;
+
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: OrderItem.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/OrderItem.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+
+@Entity
+@Getter
+@Setter
+public class OrderItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "order_id", nullable = false)
+    private Long orderId;
+
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
+
+    @Column(nullable = false)
+    private Short quantity;
+
+    @Column(nullable = false)
+    private BigDecimal amount;
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: Product.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/Product.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "products")
+@Getter
+@Setter
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false, unique = true)
+    private String barCode;
+
+    @Column(nullable = false)
+    private Double coefficient;
+
+    @Column(nullable = false)
+    private ProductType type;
+
+    public enum ProductType {
+        PLASTIC, METAL, PND
+    }
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: Warehouse.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/model/Warehouse.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "warehouses")
+@Getter
+@Setter
+public class Warehouse {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String code_gln;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String region;
+
+    @Column(name = "short_name", nullable = false)
+    private String shortName;
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: InvoiceXml.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/parser/InvoiceXml.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.parser;
+
+public class InvoiceXml {
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: OrderXlsx.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/parser/OrderXlsx.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.parser;
+
+public class OrderXlsx {
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: BaseRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/BaseRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+
+import java.util.Optional;
+
+@NoRepositoryBean
+public interface BaseRepository<T> extends JpaRepository<T, Long> {
+    Optional<T> findById(Long id);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: CustomerRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/CustomerRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import org.springframework.stereotype.Repository;
+import pro.tehnoplast.model.Counteragent;
+
+import java.util.Optional;
+
+@Repository
+public interface CustomerRepository extends BaseRepository<Customer> {
+    Optional<Customer> findByTaxId(String taxId);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: InvoicesRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/InvoicesRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import pro.tehnoplast.model.Invoice;
+
+import java.util.Optional;
+
+public interface InvoicesRepository extends BaseRepository<Invoice>{
+    Optional<Invoice> findByNumber(String invoiceNumber);
+    Optional<Invoice> findByOrderId(Long orderId);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: OrderItemsRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/OrderItemsRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import pro.tehnoplast.model.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface OrderItemsRepository extends JpaRepository<OrderItem, Long> {
+    List<OrderItem> findByOrderId(Long orderId);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: OrdersRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/OrdersRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import pro.tehnoplast.model.Order;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface OrdersRepository extends BaseRepository<Order> {
+    Optional<Order> findByOrderNumber(String orderNumber);
+
+    @Query("SELECT * FROM proto.orders o WHERE o.delivery_date = :deliveryDate")
+    List<Order> findOrdersByDeliveryDate(@Param("deliveryDate") LocalDate deliveryDate);
+
+    @Query("SELECT * FROM proto.orders o WHERE o.delivery_date = :deliveryDate AND o.region = :region")
+    List<Order> findOrdersByDeliveryDateAndRegion(@Param("deliveryDate") LocalDate deliveryDate, @Param("region") String region);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: ProductRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/ProductRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import org.springframework.stereotype.Repository;
+import pro.tehnoplast.model.Product;
+
+import java.util.Optional;
+
+@Repository
+public interface ProductRepository extends BaseRepository<Product>{
+    Optional<Product> findByBarcode(String barcode);
+    Optional<Product> findByName(String name);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: WarehouseRepository.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/repository/WarehouseRepository.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.repository;
+
+import org.springframework.stereotype.Repository;
+import pro.tehnoplast.model.Warehouse;
+
+import java.util.Optional;
+
+@Repository
+public interface WarehouseRepository extends BaseRepository<Warehouse>{
+    Optional<Warehouse> findByGln(String gln);
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: OrderParserService.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/service/OrderParserService.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast.service;
+
+import org.springframework.stereotype.Service;
+import pro.tehnoplast.repository.OrdersRepository;
+
+@Service
+public class OrderParserService {
+    private final OrdersRepository orderRepository;
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: TehnoSetiApplication.java
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/java/pro/tehnoplast/TehnoSetiApplication.java
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+package pro.tehnoplast;
+
+public class TehnoSetiApplication {
+    public static void main(String[] args) {
+//        System.out.println("Hello world!");
+    }
+}
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: application.yml
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/resources/application.yml
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tehno_seti_db
+    username: tehno_user
+    password: Hfleuf7&
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    default-schema: public
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: db.changelog-master.yaml
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/resources/db/changelog/db.changelog-master.yaml
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/initial/
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: 001-initial-schema.yaml
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/resources/db/changelog/initial/001-initial-schema.yaml
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-product-type
+      author: admin
+      changes:
+        - createEnumType:
+            enumName: producttype
+            enumValues: [plastic, metal, pnd]
+
+  - changeSet:
+      id: 002-create-customers-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tax_id
+                  type: varchar(20)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: legal_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: contact_info
+                  type: varchar(255)
+
+  - changeSet:
+      id: 003-create-warehouses-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: warehouses
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: gln
+                  type: bigint
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: short_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: region
+                  type: varchar
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 004-create-products-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: barcode
+                  type: varchar(13)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: coefficient
+                  type: numeric
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: producttype
+
+  - changeSet:
+      id: 005-create-orders-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_number
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: issue_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: delivery_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: bigint
+              - column:
+                  name: warehouse_id
+                  type: bigint
+              - addForeignKeyConstraint:
+                  baseTableName: orders
+                  baseColumnNames: customer_id
+                  constraintName: fk_orders_customers
+                  referencedTableName: customers
+                  referencedColumnNames: id
+              - addForeignKeyConstraint:
+                  baseTableName: orders
+                  baseColumnNames: warehouse_id
+                  constraintName: fk_orders_warehouses
+                  referencedTableName: warehouses
+                  referencedColumnNames: id
+
+  - changeSet:
+      id: 006-create-order-items-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: smallint
+                  constraints:
+                    nullable: false
+                    check: "quantity > 0"
+              - column:
+                  name: amount
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - addForeignKeyConstraint:
+                  baseTableName: order_items
+                  baseColumnNames: order_id
+                  constraintName: fk_order_items_orders
+                  referencedTableName: orders
+                  referencedColumnNames: id
+              - addForeignKeyConstraint:
+                  baseTableName: order_items
+                  baseColumnNames: product_id
+                  constraintName: fk_order_items_products
+                  referencedTableName: products
+                  referencedColumnNames: id
+
+  - changeSet:
+      id: 007-create-invoices-table
+      author: admin
+      changes:
+        - createTable:
+            tableName: invoices
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: invoice_number
+                  type: smallint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: invoice_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sum
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: bigint
+              - addForeignKeyConstraint:
+                  baseTableName: invoices
+                  baseColumnNames: order_id
+                  constraintName: fk_invoices_orders
+                  referencedTableName: orders
+                  referencedColumnNames: id
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: customers.tsv
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/resources/db/migration/data/customers.tsv
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+7802348846	ООО "СТД "Петрович" ggg
+7722753969	ООО "Всеинструменты.Ру" ccc
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: schema.sql
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/src/main/resources/db/migration/schema.sql
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+create schema if not exists proto;
+
+create type proto.productType as enum ('plastic', 'metal', 'pnd');
+
+create table if not exists proto.customers
+(
+    id           bigserial primary key,
+    tax_id       varchar(20)  not null unique,
+    legal_name   varchar(255) not null,
+    contact_info varchar(255)
+);
+
+create table if not exists proto.warehouses
+(
+    id         bigserial primary key,
+    gln        bigint      not null unique,
+    short_name varchar(50) not null,
+    address    text        not null,
+    region     varchar     not null
+);
+
+create table if not exists proto.products
+(
+    id          bigserial primary key,
+    name        varchar(255) not null,
+    barcode     varchar(13)  not null unique,
+    coefficient numeric      not null,
+    type        proto.productType
+);
+
+create table if not exists proto.orders
+(
+    id            bigserial primary key,
+    order_number  varchar(20) not null,
+    issue_date    date        not null,
+    delivery_date date        not null,
+    customer_id   bigint references proto.customers (id),
+    warehouse_id  bigint references proto.warehouses (id)
+);
+
+create table if not exists proto.order_items
+(
+    id         bigserial primary key,
+    order_id   bigint   not null references proto.orders (id),
+    product_id bigint   not null references proto.products (id),
+    quantity   smallint not null check (quantity > 0),
+    amount     decimal  not null
+);
+
+create table if not exists proto.invoices
+(
+    id             bigserial primary key,
+    invoice_number smallint not null,
+    invoice_date   date     not null,
+    sum            decimal  not null,
+    order_id       bigint references proto.orders (id)
+);
+
+insert into proto.customers (tax_id, legal_name, contact_info)
+values ('7802348846', 'ООО "СТД "Петрович"', '-'),
+       ('7722753969', 'ООО "Всеинструменты.Ру"', '-'),
+       ('4011024321', 'ООО Тест', 'test');
+
+
+insert into proto.warehouses (gln, short_name, address, region)
+values (4607977269995, 'Домодедово',
+        '142032, Московская область, г. Домодедово, п. Госплемзавода Константиново, стр. 03', 'Москва'),
+       (4630016670186, 'Новая Рига', '143421, Московская область, с.п. Ильинское, а/д "Балтия", 26 км, уч 3', 'Москва'),
+       (4630016670261, 'Новорязанское ш.', '140105, Московская область, п. Томилино, Новорязанское ш., 23-й км, д.19А',
+        'Москва'),
+       (4630016670179, 'Горьковское ш.', '143912, Московская область, Балашиха, ш. Энтузиастов, вл.11, стр.2',
+        'Москва'),
+       (4630016670315, 'Симферопольское ш.',
+        '142718, Московская область, Ленинский р-он, с/п Булатниковское, дер. Боброво, строение 67Ю', 'Москва'),
+       (4630016670513, 'Дмитровское ш.',
+        '141044, Московская область, городской округ Мытищи, д. Грибки, Дмитровское ш., строение 56/2', 'Москва'),
+       (4630016670698, 'РЦ Дмитровское ш.',
+        '141044, Московская область, г.о. Мытищи, д. Грибки, Дмитровское ш., стр. 56/2', 'Москва'),
+       (4630016670674, 'РЦ Юкки', '194356, Санкт-Петербург, п.Парголово, Выборгское ш., 503к3с1, п.6-Н',
+        'Санкт-Петербург'),
+       (4630016670063, 'РЦ Новосаратовка',
+        '193149, Ленинградская область, Всеволожский район, ГП им. Свердлова, д.Новосаратовка, Уткина заводь, Логистический центр МЛП, дом 15',
+        'Санкт-Петербург'),
+       (4630016670018, 'Индустриальный', '195253, Санкт-Петербург, Лапинский пр-т, 7', 'Санкт-Петербург'),
+       (4630016670629, 'Мурманское ш. (2)',
+        '188657, Ленинградская область, Всеволожский р-н, г.п. им.Свердлова, 12-13 км шоссе «Кола», д.3',
+        'Санкт-Петербург'),
+       (4630016670032, 'Парнас', '194358, Санкт-Петербург, Энгельса, 157А', 'Санкт-Петербург'),
+       (4630016670056, 'Планерная', '197372, Санкт-Петербург, ул. Планерная, 15В', 'Санкт-Петербург'),
+       (4630016670070, 'Славянка', '196627, Санкт-Петербург, п. Шушары, Ленсоветский тер., уч. 24', 'Санкт-Петербург'),
+       (4630016670087, 'Софийская', '192241, Санкт-Петербург, Южное шоссе, д.39, лит. Т', 'Санкт-Петербург'),
+       (4630016670230, 'Таллинское ш. (2)',
+        '198205, Санкт-Петербург, МО Горелово, терр. Старо-Паново, Таллинское шоссе, 155к1, стр. 1', 'Санкт-Петербург'),
+       (4630016670278, 'КАД Север',
+        '188660, Ленинградская область, Всеволожский р-н, д. Порошкино, ул.Богородская, д.3', 'Санкт-Петербург'),
+       (4630016670001, 'Гатчина', '188300, Ленинградская область, Гатчина, Промзона № 1, кв-л 6, пл.1',
+        'Санкт-Петербург');
+
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: structure_20250617_233409.txt
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/structure_20250617_233409.txt
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+
+
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▓ ФАЙЛ: tehnoseti.iml
+▓ ПУТЬ: /mnt/c/Users/user/Documents/tehnoseti/tehnoseti/tehnoseti.iml
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="tehnoseti" value="39315eb8-4d82-4683-813e-cfae2c78e0d7" />
+        </datasource-mapping>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+  </component>
+</module>
+

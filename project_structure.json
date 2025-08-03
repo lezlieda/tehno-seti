@@ -1,0 +1,143 @@
+{
+  "project_name": "OrderAndInvoiceSystem",
+  "description": "Система для импорта заказов (xlsx) и счетов (xml), а также генерации сводных отчетов.",
+  "phases": [
+    {
+      "phase_id": "setup",
+      "name": "Настройка среды разработки",
+      "description": "Подготовка окружения для работы Spring Boot приложения и базы данных PostgreSQL.",
+      "tasks": [
+        {
+          "task_id": "1.1",
+          "name": "Создание Spring Boot проекта",
+          "dependencies": [],
+          "estimated_time": "2 дня"
+        },
+        {
+          "task_id": "1.2",
+          "name": "Настройка PostgreSQL или Docker контейнера с базой данных",
+          "dependencies": ["1.1"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "backend",
+      "name": "Разработка Backend (Spring Boot)",
+      "description": "Создание REST API, сервисов для парсинга и валидации данных.",
+      "tasks": [
+        {
+          "task_id": "2.1",
+          "name": "Определение Entity-классов",
+          "dependencies": ["setup"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "2.2",
+          "name": "Реализация сервиса для парсинга xlsx файлов (Orders)",
+          "dependencies": ["2.1"],
+          "estimated_time": "4 дня"
+        },
+        {
+          "task_id": "2.3",
+          "name": "Реализация сервиса для парсинга xml файлов (Invoices)",
+          "dependencies": ["2.1"],
+          "estimated_time": "5 дней"
+        },
+        {
+          "task_id": "2.4",
+          "name": "Валидация данных между заказами и счетами",
+          "dependencies": ["2.3", "2.2"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "2.5",
+          "name": "Реализация REST API контроллеров",
+          "dependencies": ["backend"],
+          "estimated_time": "4 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "frontend",
+      "name": "Разработка Frontend (Thymeleaf)",
+      "description": "Создание веб-интерфейса для загрузки файлов и отображения результатов.",
+      "tasks": [
+        {
+          "task_id": "3.1",
+          "name": "Создание HTML/CSS интерфейсов для загрузки файлов",
+          "dependencies": ["2.5"],
+          "estimated_time": "4 дня"
+        },
+        {
+          "task_id": "3.2",
+          "name": "Интеграция frontend с backend API",
+          "dependencies": ["3.1", "2.5"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "export",
+      "name": "Разработка функционала экспорта сводных таблиц (Excel)",
+      "description": "Создание сервиса для генерации Excel-отчетов.",
+      "tasks": [
+        {
+          "task_id": "4.1",
+          "name": "Интеграция с Apache POI для создания Excel файлов",
+          "dependencies": ["frontend", "backend"],
+          "estimated_time": "5 дней"
+        },
+        {
+          "task_id": "4.2",
+          "name": "Разработка контроллера и API для экспорта данных",
+          "dependencies": ["3.2", "2.5"],
+          "estimated_time": "3 дня"
+        }
+      ]
+    },
+    {
+      "phase_id": "testing",
+      "name": "Тестирование всего приложения",
+      "description": "Проверка корректности работы всех компонентов системы.",
+      "tasks": [
+        {
+          "task_id": "5.1",
+          "name": "Тестирование парсеров (Orders, Invoices)",
+          "dependencies": ["2.4"],
+          "estimated_time": "3 дня"
+        },
+        {
+          "task_id": "5.2",
+          "name": "Тестирование REST API контроллеров",
+          "dependencies": ["export", "frontend"],
+          "estimated_time": "4 дня"
+        }
+      ]
+    }
+  ],
+  "team_roles": [
+    {
+      "role": "backend_developer",
+      "description": "Разрабатывает серверную часть, Entity-классы и API.",
+      "tasks": [],
+      "tools": ["Java", "Spring Boot", "PostgreSQL"]
+    },
+    {
+      "role": "frontend_developer",
+      "description": "Создает пользовательский интерфейс для взаимодействия с приложением.",
+      "tasks": [],
+      "tools": ["HTML/CSS/JS", "Thymeleaf"]
+    }
+  ],
+  "dependencies_summary": {
+    "spring-boot-starter-web": true,
+    "spring-boot-starter-data-jpa": true,
+    "postgreSQL": true
+  },
+  "notes": [
+    "Общая продолжительность проекта оценена в ~2 месяца.",
+    "Для парсинга XML рекомендуется использовать SAX или DOM.",
+    "Тестирование необходимо проводить на каждом этапе разработки."
+  ]
+}
