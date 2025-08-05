@@ -7,5 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface CounteragentRepository extends BaseRepository<Counteragent> {
-    Optional<Counteragent> findByTaxId(String taxId);
+    Optional<Counteragent> findByInn(String inn);
+    Optional<Counteragent> findByName(String name);
 }

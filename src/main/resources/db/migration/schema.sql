@@ -26,7 +26,8 @@ COMMENT ON COLUMN product_groups.name IS 'Название группы това
 -- Таблица контрагентов
 CREATE TABLE counteragents
 (
-    inn        VARCHAR(12) PRIMARY KEY,
+    id         SERIAL PRIMARY KEY,
+    inn        VARCHAR(12)             NOT NULL UNIQUE,
     name       VARCHAR(255)            NOT NULL,
     created_at TIMESTAMP DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP DEFAULT NOW() NOT NULL,

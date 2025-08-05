@@ -13,9 +13,8 @@ import java.util.Optional;
 public interface OrdersRepository extends BaseRepository<Order> {
     Optional<Order> findByOrderNumber(String orderNumber);
 
-    @Query("SELECT * FROM proto.orders o WHERE o.delivery_date = :deliveryDate")
-    List<Order> findOrdersByDeliveryDate(@Param("deliveryDate") LocalDate deliveryDate);
+    List<Order> findOrdersByDeliveryDate(String deliveryDate);
+    List<Order> findOrdersByOrderDate(String orderDate);
 
-    @Query("SELECT * FROM proto.orders o WHERE o.delivery_date = :deliveryDate AND o.region = :region")
     List<Order> findOrdersByDeliveryDateAndRegion(@Param("deliveryDate") LocalDate deliveryDate, @Param("region") String region);
 }
